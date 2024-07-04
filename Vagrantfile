@@ -35,8 +35,8 @@ Vagrant.configure("2") do |config|
     grafana.vm.hostname = "grafana"
     grafana.vm.provider "virtualbox" do |vb|
       vb.name = "Vagrant-grafana"
-      vb.memory = 4096
-      vb.cpus = 4
+      vb.memory = 2048
+      vb.cpus = 2
     end
 	grafana.vm.provision "shell", path: "scripts/update.sh"
 	grafana.vm.provision "shell", path: "scripts/create_user.sh"
