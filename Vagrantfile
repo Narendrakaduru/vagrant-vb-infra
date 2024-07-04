@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
     end
 	ansible.vm.provision "shell", path: "scripts/update.sh"
 	ansible.vm.provision "shell", path: "scripts/create_user.sh"
-    ansible.vm.provision "shell", path: "scripts/ansible.sh"
+  ansible.vm.provision "shell", path: "scripts/ansible.sh"
 	ansible.vm.provision "shell", path: "scripts/node_exporter.sh"
   end
   

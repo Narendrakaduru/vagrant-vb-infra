@@ -35,3 +35,49 @@ if ! grep -q "^PasswordAuthentication yes" /etc/ssh/sshd_config; then
 else
     echo "Password Authentication already enabled. Skipping."
 fi
+
+# Ensure the .ssh directory exists for nani and set correct permissions
+mkdir -p /home/nani/.ssh
+chown nani:nani /home/nani/.ssh
+
+# Get the hostname dynamically
+HOSTNAME=$(hostname)
+
+# Define the file paths
+PRIVATE_KEY="/home/nani/.ssh/id_ed25519_${HOSTNAME}"
+PUBLIC_KEY="${PRIVATE_KEY}.pub"
+TARGET_DIR="/vagrant"
+AUTHORIZED_KEYS="/home/nani/.ssh/authorized_keys"
+
+# Debugging output
+echo "DEBUG: TARGET_DIR is set to: $TARGET_DIR"
+echo "DEBUG: AUTHORIZED_KEYS is set to: $AUTHORIZED_KEYS"
+
+# Generate the ED25519 key pair with the dynamic hostname in the comment, if not already generated
+if [ ! -f "$PUBLIC_KEY" ]; then
+    ssh-keygen -t ed25519 -C "${HOSTNAME}" -f "$PRIVATE_KEY" -N "" -q
+
+    # Check if key generation was successful
+    if [ $? -ne 0 ]; then
+        echo "$HOSTNAME: Failed to generate SSH key pair."
+        exit 1
+    fi
+
+    # Change ownership of the SSH key files to nani
+    chown nani:nani "$PRIVATE_KEY" "$PUBLIC_KEY"
+    
+    # Copy the generated public key file to /vagrant
+    cp "$PUBLIC_KEY" "$TARGET_DIR"
+    echo "$HOSTNAME: SSH public key generated and copied to $TARGET_DIR."
+fi
+
+# Append all .pub files from /vagrant to authorized_keys
+for pubkey in "$TARGET_DIR"/*.pub; do
+    cat "$pubkey" >> "$AUTHORIZED_KEYS"
+    echo "Appended $pubkey to $AUTHORIZED_KEYS."
+done
+
+# Set ownership of authorized_keys to nani
+chown nani:nani "$AUTHORIZED_KEYS"
+
+echo "SSH public keys appended to /home/nani/.ssh/authorized_keys."
