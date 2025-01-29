@@ -1,77 +1,91 @@
 Vagrant.configure("2") do |config|
 
-
-  config.vm.define "dns" do |dns|
-    dns.vm.box = "bento/ubuntu-22.04"
-    dns.vm.network "private_network", type: "static", ip: "192.168.10.90"
-    dns.vm.hostname = "dns"
-    dns.vm.provider "virtualbox" do |vb|
-      vb.name = "Vagrant-dns"
-      vb.memory = 1024
-      vb.cpus = 1
-      vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
-      vb.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
-      vb.customize ["modifyvm", :id, "--vram", "16"]
-      vb.customize [
-        "modifyvm", :id, 
-        "--boot1", "dvd",
-        "--boot2", "disk"
-      ]
-      vb.customize ["modifyvm", :id, "--description", "IP: 192.168.10.90"]
-    end
-	dns.vm.provision "shell", path: "scripts/update.sh"
-	dns.vm.provision "shell", path: "scripts/create_user.sh"
-  dns.vm.provision "shell", path: "scripts/dns.sh"
-	dns.vm.provision "shell", path: "scripts/node_exporter.sh"
-  end
-
-  config.vm.define "ansible" do |ansible|
-    ansible.vm.box = "bento/ubuntu-22.04"
-    ansible.vm.network "private_network", type: "static", ip: "192.168.10.91"
-    ansible.vm.hostname = "ansible"
-    ansible.vm.provider "virtualbox" do |vb|
-      vb.name = "Vagrant-ansible"
-      vb.memory = 1024
-      vb.cpus = 1
-      vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
-      vb.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
-      vb.customize ["modifyvm", :id, "--vram", "16"]
-      vb.customize [
-        "modifyvm", :id, 
-        "--boot1", "dvd",
-        "--boot2", "disk"
-      ]
-      vb.customize ["modifyvm", :id, "--description", "IP: 192.168.10.91"]
-    end
-	ansible.vm.provision "shell", path: "scripts/update.sh"
-	ansible.vm.provision "shell", path: "scripts/create_user.sh"
-  ansible.vm.provision "shell", path: "scripts/ansible.sh"
-	ansible.vm.provision "shell", path: "scripts/node_exporter.sh"
-  end
-
-  config.vm.define "docker" do |docker|
-    docker.vm.box = "bento/ubuntu-22.04"
-    docker.vm.network "private_network", type: "static", ip: "192.168.10.92"
-    docker.vm.hostname = "VLDOCSRV002"
-    docker.vm.provider "virtualbox" do |vb|
-      vb.name = "Vagrant-docker"
+  config.vm.define "srv1" do |srv1|
+    srv1.vm.box = "bento/ubuntu-22.04"
+    srv1.vm.network "public_network", ip: "192.168.1.91"
+    srv1.vm.hostname = "vldocsrv091"
+    srv1.vm.provider "virtualbox" do |vb|
+      vb.name = "Vagrant-VLDOCSRV091"
       vb.memory = 2048
       vb.cpus = 2
+      vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
+      vb.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
+      vb.customize ["modifyvm", :id, "--vram", "16"]
+      vb.customize [
+        "modifyvm", :id, 
+        "--boot1", "dvd",
+        "--boot2", "disk"
+      ]
+      vb.customize ["modifyvm", :id, "--description", "IP: 192.168.1.91"]
     end
-    docker.vm.provision "shell", path: "scripts/update.sh"
-    docker.vm.provision "shell", path: "scripts/create_user.sh"
-    docker.vm.provision "shell", path: "scripts/docker.sh"
-    docker.vm.provision "shell", path: "scripts/node_exporter.sh"
+	srv1.vm.provision "shell", path: "scripts/update.sh"
+	srv1.vm.provision "shell", path: "scripts/create_user.sh"
+  srv1.vm.provision "shell", path: "scripts/docker.sh"
+  end
+
+  config.vm.define "srv2" do |srv2|
+    srv2.vm.box = "bento/ubuntu-22.04"
+    srv2.vm.network "public_network", ip: "192.168.1.92"
+    srv2.vm.hostname = "vldocsrv092"
+    srv2.vm.provider "virtualbox" do |vb|
+      vb.name = "Vagrant-VLDOCSRV092"
+      vb.memory = 4096
+      vb.cpus = 4
+      vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
+      vb.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
+      vb.customize ["modifyvm", :id, "--vram", "16"]
+      vb.customize [
+        "modifyvm", :id, 
+        "--boot1", "dvd",
+        "--boot2", "disk"
+      ]
+      vb.customize ["modifyvm", :id, "--description", "IP: 192.168.1.92"]
+    end
+    srv2.vm.provision "shell", path: "scripts/update.sh"
+	  srv2.vm.provision "shell", path: "scripts/create_user.sh"
+    srv2.vm.provision "shell", path: "scripts/docker.sh"
+  end
+
+  config.vm.define "srv3" do |srv3|
+    srv3.vm.box = "bento/ubuntu-22.04"
+    srv3.vm.network "public_network", ip: "192.168.1.92"
+    srv3.vm.hostname = "VLDOCSRV003"
+    srv3.vm.provider "virtualbox" do |vb|
+      vb.name = "Vagrant-VLDOCSRV003"
+      vb.memory = 4096
+      vb.cpus = 4
+      vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
+      vb.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
+      vb.customize ["modifyvm", :id, "--vram", "16"]
+      vb.customize [
+        "modifyvm", :id, 
+        "--boot1", "dvd",
+        "--boot2", "disk"
+      ]
+      vb.customize ["modifyvm", :id, "--description", "IP: 192.168.1.92"]
+    end
+    srv3.vm.provision "shell", path: "scripts/update.sh"
+    srv3.vm.provision "shell", path: "scripts/create_user.sh"
+    srv3.vm.provision "shell", path: "scripts/docker.sh"
 end
 
 config.vm.define "artifactory" do |artifactory|
   artifactory.vm.box = "bento/ubuntu-22.04"
-  artifactory.vm.network "private_network", type: "static", ip: "192.168.10.93"
-  artifactory.vm.hostname = "VLARTSRV003"
+  artifactory.vm.network "public_network", ip: "192.168.1.93"
+  artifactory.vm.hostname = "artifactory"
   artifactory.vm.provider "virtualbox" do |vb|
     vb.name = "Vagrant-artifactory"
     vb.memory = 4096
     vb.cpus = 4
+    vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
+      vb.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
+      vb.customize ["modifyvm", :id, "--vram", "16"]
+      vb.customize [
+        "modifyvm", :id, 
+        "--boot1", "dvd",
+        "--boot2", "disk"
+      ]
+      vb.customize ["modifyvm", :id, "--description", "IP: 192.168.1.93"]
   end
 artifactory.vm.provision "shell", path: "scripts/update.sh"
 artifactory.vm.provision "shell", path: "scripts/create_user.sh"
@@ -81,12 +95,21 @@ end
 
   config.vm.define "grafana" do |grafana|
     grafana.vm.box = "bento/ubuntu-22.04"
-    grafana.vm.network "private_network", type: "static", ip: "192.168.10.94"
-    grafana.vm.hostname = "VLGRFSRV004"
+    grafana.vm.network "public_network", ip: "192.168.1.94"
+    grafana.vm.hostname = "grafana"
     grafana.vm.provider "virtualbox" do |vb|
       vb.name = "Vagrant-grafana"
       vb.memory = 2048
       vb.cpus = 2
+      vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
+      vb.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
+      vb.customize ["modifyvm", :id, "--vram", "16"]
+      vb.customize [
+        "modifyvm", :id, 
+        "--boot1", "dvd",
+        "--boot2", "disk"
+      ]
+      vb.customize ["modifyvm", :id, "--description", "IP: 192.168.1.94"]
     end
 	grafana.vm.provision "shell", path: "scripts/update.sh"
 	grafana.vm.provision "shell", path: "scripts/create_user.sh"
@@ -151,7 +174,7 @@ end
       vb.customize ["modifyvm", :id, "--hostonlyadapter2", "VirtualBox Host-Only Ethernet Adapter #2"]
     end
     
-    config.disksize.size = '50GB'
+    #config.disksize.size = '50GB'
     # Adjust boot timeout
     windows.vm.boot_timeout = 600
   end    

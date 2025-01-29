@@ -46,7 +46,7 @@ HOSTNAME=$(hostname)
 # Define the file paths
 PRIVATE_KEY="/home/nani/.ssh/id_ed25519_${HOSTNAME}"
 PUBLIC_KEY="${PRIVATE_KEY}.pub"
-TARGET_DIR="/vagrant"
+TARGET_DIR="/vagrant/ssh_keys"
 AUTHORIZED_KEYS="/home/nani/.ssh/authorized_keys"
 
 # Debugging output
@@ -66,12 +66,13 @@ if [ ! -f "$PUBLIC_KEY" ]; then
     # Change ownership of the SSH key files to nani
     chown nani:nani "$PRIVATE_KEY" "$PUBLIC_KEY"
     
-    # Copy the generated public key file to /vagrant
+    # Create the ssh_keys directory at the TARGET_DIR and copy the public key there
+    mkdir -p "$TARGET_DIR"
     cp "$PUBLIC_KEY" "$TARGET_DIR"
     echo "$HOSTNAME: SSH public key generated and copied to $TARGET_DIR."
 fi
 
-# Append all .pub files from /vagrant to authorized_keys
+# Append all .pub files from TARGET_DIR to authorized_keys
 for pubkey in "$TARGET_DIR"/*.pub; do
     cat "$pubkey" >> "$AUTHORIZED_KEYS"
     echo "Appended $pubkey to $AUTHORIZED_KEYS."
