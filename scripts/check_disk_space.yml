@@ -1,0 +1,15 @@
+---
+- name: Check Disk Space utilization
+  hosts: web-server
+  become: yes
+  tasks:
+    - name: Get disk usage for `/`
+      shell: df -h / | awk 'NR==2 {print $5}' | tr -d '%'
+      register: disk_usage
+      changed_when: false
+
+    - name: Send Slack alert if disk usage is high
+      community.general.slack_webhook:
+        url: "https://hooks.slack.com/services/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"
+        msg: "🚨 *Warning:* Disk usage on `{{ inventory_hostname }}` is at *{{ disk_usage.stdout }}%*!"
+      when: disk_usage.stdout|int > 50

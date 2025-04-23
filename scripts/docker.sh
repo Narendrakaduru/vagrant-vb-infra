@@ -16,3 +16,8 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 
 sudo usermod -aG docker $USER
 sudo chmod 666 /var/run/docker.sock
+
+sudo docker network create frontend
+sudo docker network create backend
+
+sudo mkdir -p /home/nani/docker
